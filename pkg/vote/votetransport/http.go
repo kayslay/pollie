@@ -37,12 +37,20 @@ func NewHandler(s voteendpoint.Set) http.Handler {
 		options...,
 	)
 
+	pollHandler := httptransport.NewServer(
+		s.GetPoll,
+		decodeGetPollRequest,
+		pollie.EncodeResponse,
+		options...,
+	)
+
 	r.Route("/", func(r chi.Router) {
 		var tokenAuth = jwtauth.New("HS256", []byte(viper.GetString("JWT_SECRET")), nil)
 
 		r.Use(jwtauth.Verifier(tokenAuth))
 
 		r.Post("/{id}", pollie.Handler2HandlerFunc(voteHandler))
+		r.Get("/{poll_code}", pollie.Handler2HandlerFunc(pollHandler))
 	})
 
 	return r
@@ -60,4 +68,13 @@ func decodeVoteRequest(_ context.Context, r *http.Request) (interface{}, error) 
 	data.UserAgent = r.Header.Get("User-Agent")
 
 	return voteendpoint.Vote(data), nil
+}
+
+func decodeGetPollRequest(_ context.Context, r *http.Request) (interface{}, error) {
+
+	data := voteendpoint.GetReq{
+		ID: chi.URLParam(r, "poll_code"),
+	}
+
+	return data, nil
 }

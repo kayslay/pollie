@@ -13,15 +13,24 @@ import (
 )
 
 type Set struct {
-	Vote endpoint.Endpoint
+	Vote    endpoint.Endpoint
+	GetPoll endpoint.Endpoint
+}
+type pollResponse struct {
+	models.Poll
+	Summary string `json:"summary,omitempty" bson:"summary"`
 }
 
 func NewSet(svc votesvc.Service) Set {
 	voteEndpoint := makeEndpointVote(svc)
 	voteEndpoint = middleware.SetUserID(voteEndpoint)
 
+	getPollEndpoint := makeEndpointGetPoll(svc)
+	getPollEndpoint = middleware.SetUserID(getPollEndpoint)
+
 	return Set{
-		Vote: voteEndpoint,
+		Vote:    voteEndpoint,
+		GetPoll: getPollEndpoint,
 	}
 }
 
@@ -69,6 +78,25 @@ func makeEndpointVote(svc votesvc.Service) endpoint.Endpoint {
 			Data: map[string]interface{}{
 				"message": "vote successful",
 				"poll":    p,
+			},
+		}, nil
+	}
+}
+
+func makeEndpointGetPoll(svc votesvc.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+
+		req := request.(GetReq)
+		p, err := svc.GetPoll(ctx, req.ID)
+		if err != nil {
+			return pollie.Response{Err: err}, nil
+		}
+
+		return pollie.Response{
+			Status: "success",
+			Data: map[string]interface{}{
+				"message": "successfully fetched poll",
+				"poll":    pollResponse{Poll: p},
 			},
 		}, nil
 	}

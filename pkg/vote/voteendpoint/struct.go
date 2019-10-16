@@ -20,3 +20,7 @@ func (v *Vote) Validate(id, ip string) error {
 
 	return nil
 }
+
+type GetReq struct {
+	ID string //short_code
+}
