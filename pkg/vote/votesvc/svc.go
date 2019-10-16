@@ -142,6 +142,8 @@ func (s basicService) validateIdentity(eID, eIdentity, ip string) error {
 }
 
 func setMeta(meta *models.Meta) {
+
+	// TODO add a IPInterfacer to improve performance
 	ipInfo, err := pollie.ForeignIP(meta.IP)
 	if err != nil {
 		return
@@ -180,3 +182,5 @@ func (s basicService) validateVote(p models.Poll, v *models.Vote) error {
 
 	return models.ErrInvalidPollType
 }
+
+// TODO add

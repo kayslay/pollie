@@ -13,6 +13,12 @@ import (
 
 var ipstackURI = "http://api.ipstack.com"
 
+// IPInterfacer describe methods needed to store an IP
+type IPInterfacer interface {
+	Get(ip string) (*IPInfo, error)
+	Set(IPInfo) error
+}
+
 // IPInfo wraps json response
 type IPInfo struct {
 	IP            string  `json:"ip,omitempty"`
@@ -49,13 +55,25 @@ func MyIP() (*IPInfo, error) {
 }
 
 // ForeignIP provides information about the given IP address (IPv4 or IPv6)
-func ForeignIP(ip string) (*IPInfo, error) {
-
+func ForeignIP(ip string, i ...IPInterfacer) (*IPInfo, error) {
 	if ip == "" {
 		return nil, fmt.Errorf("empty ip address")
 	}
+	// checki if an IPInterfacer is passed
+	if len(i) > 0 && i[0] != nil {
+		ipInfo, err := i[0].Get(ip)
+		// if successfully gotten from the store return
+		if err == nil {
+			return ipInfo, nil
+		}
+	}
 
-	return getInfo(fmt.Sprintf("%s/%s?access_key=%s", ipstackURI, ip, viper.GetString("IP_STACK")))
+	ipInfo, err := getInfo(fmt.Sprintf("%s/%s?access_key=%s", ipstackURI, ip, viper.GetString("IP_STACK")))
+	if len(i) > 0 && i[0] != nil {
+		i[0].Set(*ipInfo)
+	}
+
+	return ipInfo, err
 }
 
 // Undercover code that makes the real call to the webservice
