@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	_log "log"
 
 	"github.com/go-kit/kit/log"
@@ -31,14 +30,11 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(viper.GetString("heLlo"), viper.GetString("cool"))
 	// set up mgo config
 	collFn, err := config.NewMgoDB()
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(viper.GetString("REDIS.ADDR"))
 
 	redisClient := config.NewRedisClient()
 

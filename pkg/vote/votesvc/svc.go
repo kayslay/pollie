@@ -78,7 +78,6 @@ func (s basicService) GetPoll(ctx context.Context, id string) (models.Poll, erro
 	// check the cache for poll
 	sPoll, err := s.redis.Get(redisKey).Result()
 	if err == nil {
-
 		err = json.Unmarshal([]byte(sPoll), &poll)
 		if err == nil {
 			return poll, nil
@@ -122,8 +121,6 @@ func (s basicService) GetPoll(ctx context.Context, id string) (models.Poll, erro
 // checks if the poll uses ip, cookies, user, secret, social media e.t.c
 func (s basicService) validateIdentity(eID, eIdentity, ip string) error {
 
-	// return nil //TODO uncomment to check ip
-
 	switch eIdentity {
 	case models.IDIPAddr:
 		b, err := s.repo.IPExists(eID, ip)
@@ -144,6 +141,7 @@ func (s basicService) validateIdentity(eID, eIdentity, ip string) error {
 func setMeta(meta *models.Meta) {
 
 	// TODO add a IPInterfacer to improve performance
+	// use save IP information from cache
 	ipInfo, err := pollie.ForeignIP(meta.IP)
 	if err != nil {
 		return
