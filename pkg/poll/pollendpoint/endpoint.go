@@ -11,6 +11,8 @@ import (
 	"pollie/pkg/poll/pollsvc"
 
 	"github.com/go-kit/kit/endpoint"
+	"github.com/go-kit/kit/log"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -21,23 +23,27 @@ type Set struct {
 	Get     endpoint.Endpoint
 }
 
-func NewSet(s pollsvc.Service) Set {
+func NewSet(s pollsvc.Service, logger log.Logger) Set {
 
 	//
 	createEndpoint := MakeEndpointCreate(s)
 	createEndpoint = middleware.SetUserID(createEndpoint)
+	createEndpoint = middleware.Logger(log.With(logger, "method", "create_poll"))(createEndpoint)
 
 	//
 	deleteEndpoint := MakeEndpointDelete(s)
 	deleteEndpoint = middleware.SetUserID(deleteEndpoint)
+	deleteEndpoint = middleware.Logger(log.With(logger, "method", "delete_poll"))(deleteEndpoint)
 
 	//
 	getManyEndpoint := MakeEndpointGetMany(s)
 	getManyEndpoint = middleware.SetUserID(getManyEndpoint)
+	getManyEndpoint = middleware.Logger(log.With(logger, "method", "get_many_poll"))(getManyEndpoint)
 
 	//
 	getEndpoint := MakeEndpointGet(s)
 	getEndpoint = middleware.SetUserID(getEndpoint)
+	getEndpoint = middleware.Logger(log.With(logger, "method", "get_poll"))(getEndpoint)
 
 	return Set{
 		Create:  createEndpoint,
@@ -69,7 +75,7 @@ func MakeEndpointCreate(s pollsvc.Service) endpoint.Endpoint {
 		return pollie.Response{
 			Status: "success",
 			Data: map[string]interface{}{
-				"link":    fmt.Sprintf("https://pollie.io/v/%s", code),
+				"link":    fmt.Sprintf("%s/%s", viper.GetString("pollie_hostname"), code),
 				"message": "poll created successfully",
 			},
 		}, nil
@@ -118,7 +124,6 @@ func MakeEndpointGetMany(s pollsvc.Service) endpoint.Endpoint {
 func MakeEndpointGet(s pollsvc.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(GetReq)
-		// get the poll without the user
 		p, err := s.Get(ctx, req.ID)
 		if err != nil {
 			return pollie.Response{Err: err}, nil

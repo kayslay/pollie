@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/go-kit/kit/endpoint"
+	"github.com/go-kit/kit/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -21,12 +22,14 @@ type pollResponse struct {
 	Summary string `json:"summary,omitempty" bson:"summary"`
 }
 
-func NewSet(svc votesvc.Service) Set {
+func NewSet(svc votesvc.Service, logger log.Logger) Set {
 	voteEndpoint := makeEndpointVote(svc)
 	voteEndpoint = middleware.SetUserID(voteEndpoint)
+	voteEndpoint = middleware.Logger(log.With(logger, "method", "make_vote"))(voteEndpoint)
 
 	getPollEndpoint := makeEndpointGetPoll(svc)
 	getPollEndpoint = middleware.SetUserID(getPollEndpoint)
+	getPollEndpoint = middleware.Logger(log.With(logger, "method", "get_vote_poll"))(getPollEndpoint)
 
 	return Set{
 		Vote:    voteEndpoint,

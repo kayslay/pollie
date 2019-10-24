@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
+	_log "log"
+
+	"github.com/go-kit/kit/log"
+
 	"net/http"
+	"os"
 	"pollie/config"
 	"pollie/pkg"
 	"pollie/pkg/poll/pollendpoint"
@@ -38,13 +42,15 @@ func main() {
 
 	redisClient := config.NewRedisClient()
 
+	logger := log.NewJSONLogger(os.Stderr)
+
 	pollRepo := pollrepo.NewRepository(collFn)
 	pollSvc := pollsvc.NewService(pollRepo)
-	pollSet := pollendpoint.NewSet(pollSvc)
+	pollSet := pollendpoint.NewSet(pollSvc, logger)
 
 	voteRepo := voterepo.NewRepository(collFn)
 	voteSvc := votesvc.NewService(voteRepo, pollRepo, redisClient)
-	voteSet := voteendpoint.NewSet(voteSvc)
+	voteSet := voteendpoint.NewSet(voteSvc, logger)
 
 	r := pkg.NewRouter(pollSet, voteSet)
 	port := viper.GetString("PORT")
@@ -56,7 +62,7 @@ func main() {
 		Addr:         port,
 	}
 
-	log.Println("server running on", port)
-	log.Fatal(s.ListenAndServe(), "Server Stopped")
+	_log.Println("server running on", port)
+	_log.Fatal(s.ListenAndServe(), "Server Stopped")
 
 }
