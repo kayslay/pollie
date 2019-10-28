@@ -142,7 +142,7 @@ func setMeta(meta *models.Meta) {
 
 	// TODO add a IPInterfacer to improve performance
 	// use save IP information from cache
-	ipInfo, err := pollie.ForeignIP(meta.IP)
+	ipInfo, err := pollie.ForeignIP(meta.IP, pollie.DefaultMgoIpInterfacer)
 	if err != nil {
 		return
 	}

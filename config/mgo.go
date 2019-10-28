@@ -83,4 +83,13 @@ func createIndex(ctx context.Context, d *mongo.Database) {
 	d.Collection("votes").Indexes().CreateOne(ctx, votePollIDIndex)
 	d.Collection("votes").Indexes().CreateOne(ctx, voteIPIndex)
 
+	// ip
+	ipIndex := mongo.IndexModel{
+		Keys: bson.M{
+			"ip": 1,
+		},
+	}
+
+	d.Collection("ips").Indexes().CreateOne(ctx, ipIndex)
+
 }

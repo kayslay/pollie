@@ -2,6 +2,7 @@ package main
 
 import (
 	_log "log"
+	"pollie"
 
 	"github.com/go-kit/kit/log"
 
@@ -35,6 +36,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// init mgo IP interfacer
+	pollie.InitMgoIPer(collFn)
 
 	redisClient := config.NewRedisClient()
 
