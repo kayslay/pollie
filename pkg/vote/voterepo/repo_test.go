@@ -53,6 +53,7 @@ var _ = Describe("Pkg/Vote/Voterepo/Repo", func() {
 	AfterEach(func() {
 		mgoFn(models.VoteCollection).Drop(context.TODO())
 		mgoFn(models.PollCollection).Drop(context.TODO())
+		mgoFn("ips").Drop(context.TODO())
 	})
 
 	Describe("Check if IPExist", func() {
