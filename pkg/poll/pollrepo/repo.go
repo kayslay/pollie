@@ -76,7 +76,7 @@ func (r repository) GetMany(_ctx context.Context, uID string) ([]models.Poll, er
 
 	pp := []models.Poll{}
 
-	cur, err := c.Find(ctx, bson.M{"user_id": _uID, "deleted_at": nil, "expired_at": nil})
+	cur, err := c.Find(ctx, bson.M{"user_id": _uID, "deleted_at": nil})
 	if err != nil {
 		return nil, err
 	}
@@ -100,12 +100,12 @@ func (r repository) Get(_ctx context.Context, id string) (models.Poll, error) {
 	c := r.mgo(models.PollCollection)
 	p := models.Poll{}
 	// the default filter uses the short code to get the poll
-	filter := bson.M{"short_code": id}
+	filter := bson.M{"short_code": id, "deleted_at": nil}
 
 	_id, err := primitive.ObjectIDFromHex(id)
 	// if the id is a valid ObjectID user the _id to the poll
 	if err == nil {
-		filter = bson.M{"_id": _id}
+		filter = bson.M{"_id": _id, "deleted_at": nil}
 	}
 
 	sResult := c.FindOne(ctx, filter)
