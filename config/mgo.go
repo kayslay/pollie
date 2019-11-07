@@ -50,16 +50,8 @@ func createIndex(ctx context.Context, d *mongo.Database) {
 		},
 	}
 
-	pollExpiresAtIndex := mongo.IndexModel{
-		Keys: bson.M{
-			"expires_at": 1,
-		},
-		Options: options.Index().SetExpireAfterSeconds(60),
-	}
-
 	d.Collection("polls").Indexes().CreateOne(ctx, pollShortCodeIndex)
 	d.Collection("polls").Indexes().CreateOne(ctx, pollUserIDIndex)
-	d.Collection("polls").Indexes().CreateOne(ctx, pollExpiresAtIndex)
 
 	// votes
 	voteUserIDIndex := mongo.IndexModel{
