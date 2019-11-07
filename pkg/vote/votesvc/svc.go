@@ -43,6 +43,10 @@ func (s basicService) Vote(ctx context.Context, v models.Vote) (models.Poll, err
 		return p, err
 	}
 
+	if p.ExpiresAt != nil && time.Now().After(*p.ExpiresAt) {
+		return p, errors.Errorf("poll has expired for voting. check result")
+	}
+
 	// validate the vote
 	err := s.validateVote(p, &v)
 	if err != nil {
@@ -63,7 +67,8 @@ func (s basicService) Vote(ctx context.Context, v models.Vote) (models.Poll, err
 	// get the updated poll document
 	_p, err := s.pollRepo.Get(ctx, p.ID.Hex())
 	if err != nil {
-		// return previous poll
+		// return previous poll value. this is a minor detail
+		// that should not fail the whole vote op
 		return p, nil
 	}
 

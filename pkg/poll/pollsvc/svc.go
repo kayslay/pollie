@@ -63,13 +63,14 @@ func setupPoll(p models.Poll) models.Poll {
 		pll.Identity = models.IDIPAddr
 	}
 
-	// if poll is anonymous
+	// if poll is anonymous, expire the poll in 24 hours
 	if pll.UserID == primitive.NilObjectID {
 		et := time.Now().Add(time.Hour * 24)
 		pll.ExpiresAt = &et
 	}
 
 	pll.Summary = models.PollSummary{
+		// set a default value
 		OptionCount: make([]int64, len(pll.Option)),
 	}
 
