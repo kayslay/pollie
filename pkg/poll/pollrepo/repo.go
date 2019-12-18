@@ -13,7 +13,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-//go:generate mockgen -package mock -destination=./mock/listener.go  pollie/pkg/poll/pollrepo Repository
+//go:generate mockgen -package mock -destination=./mock/mock.go  pollie/pkg/poll/pollrepo Repository
 
 // Repository describe the interface for a poll repo
 type Repository interface {
