@@ -12,6 +12,7 @@ require (
 	github.com/gobuffalo/uuid v2.0.5+incompatible // indirect
 	github.com/gobuffalo/validate v2.0.3+incompatible
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect
+	github.com/golang/mock v1.1.1
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/kayslay/random-str v0.0.1
 	github.com/lib/pq v1.2.0 // indirect
