@@ -1,0 +1,27 @@
+version: "3"
+services:
+  pollie:
+    build: .
+    labels:
+      - "com.pollie"
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - "6000:6000"
+    networks:
+      public:
+      private:
+  mongo:
+    image: mongo
+    networks:
+      private:
+  redis:
+    image: redis
+    networks:
+      private:
+
+networks:
+  public:
+  private:
+    internal: true
