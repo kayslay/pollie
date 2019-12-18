@@ -1,0 +1,7 @@
+mgo_url: "mongodb://mongo:27017"
+mgo_db: "pollie"
+port: ":6000"
+host: "localhost:6000"
+redis:
+  addr: "redis:6379"
+pollie_hostname: localhost:6000/vote
