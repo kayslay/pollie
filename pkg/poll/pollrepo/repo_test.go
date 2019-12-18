@@ -13,9 +13,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func TestVote(t *testing.T) {
+func TestPollRepo(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Pollie Suite")
+	RunSpecs(t, "Pollie Repository Suite")
 }
 
 var _ = Describe("Pkg/Poll/Pollrepo/Repo", func() {

@@ -13,10 +13,17 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+//go:generate mockgen -package mock -destination=./mock/listener.go  pollie/pkg/poll/pollrepo Repository
+
+// Repository describe the interface for a poll repo
 type Repository interface {
+	// Create create a poll
 	Create(ctx context.Context, p models.Poll) error
+	// Delete delete a poll
 	Delete(ctx context.Context, id, uID string) error
+	// GetMany get a list of polls created by a user
 	GetMany(ctx context.Context, uID string) ([]models.Poll, error)
+	// Get get a poll by id
 	Get(ctx context.Context, id string) (models.Poll, error)
 }
 
